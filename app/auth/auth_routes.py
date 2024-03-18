@@ -1,10 +1,9 @@
 # Packages
-from flask import Blueprint, jsonify
+from flask import current_app, Blueprint, jsonify
 from requests.exceptions import HTTPError
 
 
 # Auth files
-from instance.config import EXAMPLE_PASSWORD, EXAMPLE_EMAIL
 from .utils.parse_sign_in import parse_sign_in
 from .utils.parse_error import parse_error
 from .firebase_service import init_firebase
@@ -30,7 +29,9 @@ def login():
 
     try:
         response = parse_sign_in(
-            firebase_auth.sign_in_with_email_and_password(EXAMPLE_EMAIL, EXAMPLE_PASSWORD)
+            firebase_auth.sign_in_with_email_and_password(
+                current_app.config['EXAMPLE_EMAIL'], current_app.config['EXAMPLE_PASSWORD']
+            )
         )
         return jsonify(response.__dict__), 200
 
