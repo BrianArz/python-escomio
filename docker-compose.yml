@@ -1,0 +1,21 @@
+services:
+  flask-app:
+    container_name: python-escomio-app
+    build: .
+    image: python-escomio:v1
+    networks:
+      - internalnet
+
+  nginx:
+    container_name: nginx_server
+    build: ./nginx
+    networks:
+      - internalnet
+    ports:
+      - 8080:80
+    depends_on:
+      - flask-app
+
+networks:
+  internalnet:
+    driver: bridge
