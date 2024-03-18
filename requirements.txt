@@ -1,2 +1,4 @@
-Flask==3.0.2
-Pyrebase4==4.7.1
+Flask
+Pyrebase4
+Gunicorn
+Setuptools
