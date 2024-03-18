@@ -23,6 +23,9 @@ FROM python:alpine3.19
 # Set the working directory for the application
 WORKDIR /usr/app
 
+# Set application environment configuration
+ENV FLASK_ENV=production
+
 # Copy the virtual environment from the build stage
 COPY --from=build /usr/app/venv ./venv
 
