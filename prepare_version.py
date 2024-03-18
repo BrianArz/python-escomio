@@ -1,3 +1,4 @@
+import os
 import subprocess
 
 
@@ -14,6 +15,10 @@ version_info = f"""
 '1.0.{git_version}.{is_dirty}' - {commit_hash};
 """
 
-# Escribe la información en un archivo
-with open("version_info.txt", "w") as file:
+file_path = "version_info.txt"
+
+if os.path.exists(file_path):
+    os.remove(file_path)
+
+with open(file_path, "w") as file:
     file.write(version_info.strip())
