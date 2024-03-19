@@ -8,7 +8,7 @@ health_bp = Blueprint('health_bp', __name__)
 
 @health_bp.route('/hello')
 def hello():
-    return jsonify('Hello'), 200
+    return jsonify('Hello World!'), 200
 
 
 @health_bp.route('/get-environment')
