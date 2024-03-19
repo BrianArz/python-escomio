@@ -3,6 +3,7 @@ FROM python:alpine3.19 as build
 
 # Update the package list and install build dependencies
 RUN apk update
+RUN apk add --no-cache git
 RUN apk add --no-cache \
       build-base gcc
 
@@ -17,14 +18,25 @@ ENV PATH="/usr/app/venv/bin:$PATH"
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+COPY . .
+RUN rm -rf /usr/app/version_file.txt
+RUN python prepare_version.py
+
+
 # Start a new stage from a lightweight Python base image
 FROM python:alpine3.19
 
 # Set the working directory for the application
 WORKDIR /usr/app
 
+# Set application environment configuration
+ENV FLASK_ENV=production
+
 # Copy the virtual environment from the build stage
 COPY --from=build /usr/app/venv ./venv
+
+# Copy version file
+COPY --from=build /usr/app/version_info.txt .
 
 # Copy the rest of the application code
 COPY . .
