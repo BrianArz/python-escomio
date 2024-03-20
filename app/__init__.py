@@ -3,8 +3,7 @@ from flask import Flask
 import os
 
 # Local files
-from .auth import auth_routes as auth
-from .health import health_routes as health
+from app.route import health_bp, auth_bp
 
 
 def create_app():
@@ -20,7 +19,7 @@ def create_app():
         flask_app.config.from_pyfile('development_config.py', silent=True)
 
     # Blueprints registry
-    flask_app.register_blueprint(auth.auth_bp, url_prefix='/auth')
-    flask_app.register_blueprint(health.health_bp, url_prefix='/health')
+    flask_app.register_blueprint(auth_bp, url_prefix='/auth')
+    flask_app.register_blueprint(health_bp, url_prefix='/health')
 
     return flask_app

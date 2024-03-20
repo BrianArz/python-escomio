@@ -4,15 +4,14 @@ from requests.exceptions import HTTPError
 
 
 # Auth files
-from .utils.parse_sign_in import parse_sign_in
-from .utils.parse_error import parse_error
-from .firebase_service import init_firebase
+from app.core import parse_error, parse_sign_in
+from app.service import firebase_service
 
 # Defines the blueprint
 auth_bp = Blueprint('auth', __name__)
 
 # Initilizes firebase app
-firebase_app = init_firebase()
+firebase_app = firebase_service.init_firebase()
 firebase_auth = firebase_app.auth()
 
 
