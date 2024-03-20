@@ -19,7 +19,6 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
-RUN rm -rf /usr/app/version_file.txt
 RUN python prepare_version.py
 
 
