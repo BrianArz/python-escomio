@@ -17,8 +17,5 @@ version_info = f"""
 
 file_path = "version_info.txt"
 
-if os.path.exists(file_path):
-    os.remove(file_path)
-
 with open(file_path, "w") as file:
     file.write(version_info.strip())
