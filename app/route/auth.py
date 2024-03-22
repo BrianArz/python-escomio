@@ -23,7 +23,7 @@ def login():
     :parameter: User email and password
     :return: SignInResponse object
     """
-    # Get email and password from HTTP Request T
+    # Get email and password from HTTP Request
     email = request.json.get('email')
     password = request.json.get('password')
 
