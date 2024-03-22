@@ -1,5 +1,5 @@
 # Packages
-from flask import current_app, Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 from requests.exceptions import HTTPError
 
 
@@ -20,16 +20,17 @@ def login():
     """
     Signs into FirebaseAuth with user credentials
 
-    TODO: Get email and password from HTTP Request
-    :parameter:
-
-    :return:
+    :parameter: User email and password
+    :return: SignInResponse object
     """
+    # Get email and password from HTTP Request
+    email = request.json.get('email')
+    password = request.json.get('password')
 
     try:
         response = parse_sign_in(
             firebase_auth.sign_in_with_email_and_password(
-                current_app.config['EXAMPLE_EMAIL'], current_app.config['EXAMPLE_PASSWORD']
+                email, password
             )
         )
         return jsonify(response.__dict__), 200
