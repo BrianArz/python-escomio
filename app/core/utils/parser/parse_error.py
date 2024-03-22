@@ -2,7 +2,7 @@
 import json
 
 # Local files
-from app.auth.models.firebase_error import FirebaseError
+from app.schema import FirebaseError
 
 
 def parse_error(error: str) -> FirebaseError:

@@ -2,7 +2,7 @@
 import json
 
 # Local files
-from ..models.sign_in_response import SignInResponse
+from app.schema import SignInResponse
 
 
 def parse_sign_in(response: json) -> SignInResponse:
