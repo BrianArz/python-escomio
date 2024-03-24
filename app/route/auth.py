@@ -59,7 +59,7 @@ def sign_up():
         user = firebase_auth.create_user_with_email_and_password(email, password)
         # If successful, let's also sign in the user and return the token and expires
         response = parse_sign_in(firebase_auth.sign_in_with_email_and_password(email, password))
-        return jsonify(response.__dict__), 201  # 201 indicates resource created
+        return jsonify(response.__dict__), 200
 
     except HTTPError as error:
         error_data = parse_error(error.strerror)
