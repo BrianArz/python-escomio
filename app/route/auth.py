@@ -4,14 +4,11 @@ from requests.exceptions import HTTPError
 
 # Local files
 from app.core import parse_error, parse_sign_in
-from app.service import firebase_service
+from app.service import get_firebase_auth
+from app.core import authorize
 
 # Defines the blueprint
 auth_bp = Blueprint('auth', __name__)
-
-# Initilizes firebase app
-firebase_app = firebase_service.init_firebase()
-firebase_auth = firebase_app.auth()
 
 
 @auth_bp.route('/sign-in', methods=['POST'])
@@ -22,6 +19,10 @@ def login():
     :parameter: User email and password
     :return: SignInResponse object
     """
+
+    # Get firebase app instance
+    firebase_auth = get_firebase_auth()
+
     # Get email and password from HTTP Request
     email = request.json.get('email')
     password = request.json.get('password')
@@ -55,6 +56,10 @@ def sign_up():
     :parameter: User email and password
     :return: SignInResponse object
     """
+
+    # Get firebase app instance
+    firebase_auth = get_firebase_auth()
+
     # Get email and password from HTTP Request
     email = request.json.get('email')
     password = request.json.get('password')
@@ -79,3 +84,9 @@ def sign_up():
             return jsonify({'Internal server error': error.strerror}), 500
 
         return jsonify({'message': error_data.message}), 400
+
+
+@auth_bp.route('/authorized-hello-world', methods=['GET'])
+@authorize
+def authorized_welcome():
+    return jsonify({'message': 'This is an authorized Hello World!'}), 200
