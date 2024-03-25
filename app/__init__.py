@@ -1,5 +1,6 @@
 # Packages
 from flask import Flask
+from flask_cors import CORS
 import os
 
 # Local files
@@ -25,6 +26,10 @@ def create_firebase_admin():
 
 def create_app():
     flask_app = Flask(__name__, instance_relative_config=True)
+
+    # This allows access from any origin. To restrict to certain domain replace "*" with url
+    CORS(flask_app)
+    flask_app.config['CORS_HEADERS'] = 'Content-Type'
 
     # Get environment, if not defined 'development' will be default
     environment = os.getenv('FLASK_ENV', 'development')

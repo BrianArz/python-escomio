@@ -3,3 +3,4 @@ pyrebase4
 gunicorn
 firebase-admin
 setuptools
+flask-cors
