@@ -2,7 +2,7 @@
 from flask import Blueprint, jsonify, request
 from requests.exceptions import HTTPError
 
-# Auth files
+# Local files
 from app.core import parse_error, parse_sign_in
 from app.service import firebase_service
 
@@ -14,7 +14,7 @@ firebase_app = firebase_service.init_firebase()
 firebase_auth = firebase_app.auth()
 
 
-@auth_bp.route('/sign-in-with-email-and-password', methods=['POST'])
+@auth_bp.route('/sign-in', methods=['POST'])
 def login():
     """
     Signs into FirebaseAuth with user credentials
@@ -25,6 +25,10 @@ def login():
     # Get email and password from HTTP Request
     email = request.json.get('email')
     password = request.json.get('password')
+
+    # Validates empty request body
+    if email is None or password is None:
+        return jsonify({'message': 'Missing Credentials'}), 400
 
     try:
         response = parse_sign_in(
@@ -55,10 +59,17 @@ def sign_up():
     email = request.json.get('email')
     password = request.json.get('password')
 
+    # Validates empty request body
+    if email is None or password is None:
+        return jsonify({'message': 'Missing Credentials'}), 400
+
     try:
-        user = firebase_auth.create_user_with_email_and_password(email, password)
-        # If successful, let's also sign in the user and return the token and expires
-        response = parse_sign_in(firebase_auth.sign_in_with_email_and_password(email, password))
+        response = parse_sign_in(
+            firebase_auth.create_user_with_email_and_password(
+                email, password
+            )
+        )
+
         return jsonify(response.__dict__), 200
 
     except HTTPError as error:
