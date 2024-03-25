@@ -15,8 +15,9 @@ def parse_sign_in(response: json) -> SignInResponse:
     try:
         expires_in = response.get('expiresIn')
         refresh_token = response.get('refreshToken')
+        id_token = response.get('idToken')
 
-        return SignInResponse(expires_in, refresh_token)
+        return SignInResponse(expires_in, refresh_token, id_token)
 
     except json.JSONDecodeError:
         pass
