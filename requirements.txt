@@ -1,4 +1,5 @@
-Flask
-Pyrebase4
-Gunicorn
-Setuptools
+flask
+pyrebase4
+gunicorn
+firebase-admin
+setuptools
