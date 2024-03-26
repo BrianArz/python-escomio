@@ -12,7 +12,7 @@ services:
     networks:
       - internalnet
     ports:
-      - 8080:80
+      - 5000:5001
     depends_on:
       - flask-app
 
