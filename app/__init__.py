@@ -4,14 +4,19 @@ from flask_cors import CORS
 import os
 
 # Local files
-from app.route import health_bp, auth_bp
+from app.route import health_bp, auth_bp, rasa_bp
 from .service.firebase import firebase_service
 
+# Global variables
 firebase_app = None
 firebase_admin = None
 
 
 def create_firebase_app():
+    """
+    Creates Pyrebase app for singleton import
+    :return: pyrebase app instance
+    """
     global firebase_app
     if firebase_app is None:
         firebase_app = firebase_service.init_firebase()
@@ -19,6 +24,9 @@ def create_firebase_app():
 
 
 def create_firebase_admin():
+    """
+    Initializes firebase admin application
+    """
     global firebase_admin
     if firebase_admin is None:
         firebase_admin = firebase_service.init_firebase_admin()
@@ -43,6 +51,7 @@ def create_app():
     # Blueprints registry
     flask_app.register_blueprint(auth_bp, url_prefix='/auth')
     flask_app.register_blueprint(health_bp, url_prefix='/health')
+    flask_app.register_blueprint(rasa_bp, url_prefix='/rasa')
 
     # Initializes firebase application
     create_firebase_app()
