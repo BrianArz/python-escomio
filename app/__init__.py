@@ -7,11 +7,16 @@ import os
 from app.route import health_bp, auth_bp, rasa_bp
 from .service.firebase import firebase_service
 
+# Global variables
 firebase_app = None
 firebase_admin = None
 
 
 def create_firebase_app():
+    """
+    Creates Pyrebase app for singleton import
+    :return: pyrebase app instance
+    """
     global firebase_app
     if firebase_app is None:
         firebase_app = firebase_service.init_firebase()
@@ -19,6 +24,9 @@ def create_firebase_app():
 
 
 def create_firebase_admin():
+    """
+    Initializes firebase admin application
+    """
     global firebase_admin
     if firebase_admin is None:
         firebase_admin = firebase_service.init_firebase_admin()
