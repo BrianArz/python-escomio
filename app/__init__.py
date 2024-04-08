@@ -43,10 +43,12 @@ def create_app():
     environment = os.getenv('FLASK_ENV', 'development')
 
     # App configuration
-    if environment == 'production':
-        flask_app.config.from_pyfile('production_config.py', silent=True)
-    else:
+    if environment == 'development':
         flask_app.config.from_pyfile('development_config.py', silent=True)
+    elif environment == 'docker':
+        flask_app.config.from_pyfile('docker_config.py', silent=True)
+    else:
+        flask_app.config.from_pyfile('production_config.py', silent=True)
 
     # Blueprints registry
     flask_app.register_blueprint(auth_bp, url_prefix='/auth')
