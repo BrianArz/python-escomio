@@ -1,9 +1,13 @@
 import json
-
-from flask import current_app, Blueprint, jsonify
+import os
+from flask import Blueprint, jsonify
 
 # Defining the blueprint
 health_bp = Blueprint('health_bp', __name__)
+
+
+# Check the FLASK_ENV environment variable
+flask_env = os.getenv('FLASK_ENV', 'development')  # Default to 'development' if not set
 
 
 @health_bp.route('/hello')
@@ -13,7 +17,7 @@ def hello():
 
 @health_bp.route('/get-environment')
 def get_environment():
-    return jsonify({'message': current_app.config['ENVIRONMENT']}), 200
+    return jsonify({'message': flask_env}), 200
 
 
 @health_bp.route('/get-version')
