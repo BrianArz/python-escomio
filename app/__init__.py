@@ -4,7 +4,7 @@ from flask_cors import CORS
 import os
 
 # Local files
-from app.route import health_bp, auth_bp, rasa_bp
+from app.route import health_bp, auth_bp, rasa_bp, user_bp
 from .service.firebase import firebase_service
 
 # Global variables
@@ -52,6 +52,7 @@ def create_app():
     flask_app.register_blueprint(auth_bp, url_prefix='/auth')
     flask_app.register_blueprint(health_bp, url_prefix='/health')
     flask_app.register_blueprint(rasa_bp, url_prefix='/rasa')
+    flask_app.register_blueprint(user_bp, url_prefix='/user')
 
     # Initializes firebase application
     create_firebase_app()
