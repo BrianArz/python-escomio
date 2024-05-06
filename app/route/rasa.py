@@ -1,11 +1,10 @@
 # Packages
-from flask import Blueprint, jsonify, request
+from flask import current_app, Blueprint, jsonify, request
 import requests
 
 # Local files
 from app.core import authorize
 from app.core import parse_test_question
-import app.config as config
 
 # Defines the blueprint
 rasa_bp = Blueprint('rasa', __name__)
@@ -29,7 +28,8 @@ def test_question():
     if sender is None or message is None:
         return jsonify({'message': 'Missing Information'}), 400
 
-    api_url = f"{config.RASA_URI}:{config.RASA_PORT}/{config.TEST_QUESTION}"
+    api_url = \
+        f"{current_app.config["RASA_URI"]}:{current_app.config["RASA_PORT"]}/{current_app.config["TEST_QUESTION"]}"
 
     try:
         response = requests.post(api_url, json={'sender': sender, 'message': message})

@@ -1,21 +1,15 @@
 services:
   flask-app:
     container_name: python-escomio-app
+    environment:
+      - FLASK_ENV=docker
     build: .
     image: python-escomio:v1
-    networks:
-      - internalnet
 
-  nginx:
-    container_name: nginx_server
+  python-nginx-server:
+    container_name: nginx-server
     build: ./nginx
-    networks:
-      - internalnet
     ports:
-      - 5000:5001
+      - 5001:5001
     depends_on:
       - flask-app
-
-networks:
-  internalnet:
-    driver: bridge
