@@ -1,6 +1,6 @@
-# Packages
-from flask import Flask
+from flask import Flask, current_app
 from flask_cors import CORS
+from redis_om import get_redis_connection
 import os
 
 # Local files
@@ -10,6 +10,7 @@ from .service.firebase import firebase_service
 # Global variables
 firebase_app = None
 firebase_admin = None
+redis_connection = None
 
 
 def create_firebase_app():
@@ -30,6 +31,17 @@ def create_firebase_admin():
     global firebase_admin
     if firebase_admin is None:
         firebase_admin = firebase_service.init_firebase_admin()
+
+
+def get_redis():
+    """
+    Redis connection configuration
+    """
+    global redis_connection
+    if redis_connection is None:
+        redis_url = current_app.config.get('REDIS_URL')
+        redis_connection = get_redis_connection(url=redis_url)
+    return redis_connection
 
 
 def create_app():
@@ -60,5 +72,9 @@ def create_app():
 
     # Initializes firebase admin app
     create_firebase_admin()
+
+    # Initializes redis
+    with flask_app.app_context():
+        get_redis()
 
     return flask_app
