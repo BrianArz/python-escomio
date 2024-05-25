@@ -4,7 +4,7 @@ from requests.exceptions import HTTPError
 
 # Local files
 from app.core import parse_error, parse_sign_in
-from app.service import get_firebase_auth
+from app.service import FirebaseService
 from app.core import authorize
 
 # Defines the blueprint
@@ -21,7 +21,7 @@ def login():
     """
 
     # Get firebase app instance
-    firebase_auth = get_firebase_auth()
+    firebase_auth = FirebaseService.get_firebase_auth()
 
     # Get email and password from HTTP Request
     email = request.json.get('email')
@@ -58,7 +58,7 @@ def sign_up():
     """
 
     # Get firebase app instance
-    firebase_auth = get_firebase_auth()
+    firebase_auth = FirebaseService.get_firebase_auth()
 
     # Get email and password from HTTP Request
     email = request.json.get('email')
