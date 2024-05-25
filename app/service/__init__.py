@@ -1,4 +1,3 @@
 
-# Firebase
-from .firebase import firebase_service
-from .firebase.firebase_service import get_firebase_auth
+from .firebase_service import FirebaseService
+from .redis_service import RedisService
