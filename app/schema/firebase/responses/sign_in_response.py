@@ -1,4 +1,4 @@
-class SignInResponse:
+class FirebaseSignInResponse:
     expires_in: str
     refresh_token: str
     id_token: str

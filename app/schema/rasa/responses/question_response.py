@@ -1,4 +1,4 @@
-class TestQuestionResponse:
+class RasaQuestionResponse:
     recipient_id: str
     text: str
 
