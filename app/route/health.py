@@ -2,12 +2,9 @@ import json
 import os
 from flask import Blueprint, jsonify
 
-# Defining the blueprint
 health_bp = Blueprint('health_bp', __name__)
 
-
-# Check the FLASK_ENV environment variable
-flask_env = os.getenv('FLASK_ENV', 'development')  # Default to 'development' if not set
+flask_env = os.getenv('FLASK_ENV', 'development')
 
 
 @health_bp.route('/hello')
@@ -25,6 +22,6 @@ def get_version():
     try:
         with open('version_info.txt', 'r') as file:
             version_info = file.read()
-        return jsonify({'message': version_info})
+        return jsonify({'message': version_info}), 200
     except json.JSONDecodeError as e:
-        return jsonify({'error': f'Could not read version information from file: {str(e)}'})
+        return jsonify({'error': f'Could not read version information from file: {str(e)}'}), 500
