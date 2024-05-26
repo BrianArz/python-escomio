@@ -1,11 +1,16 @@
+from datetime import datetime
+
 from app.model import RedisUser
 
 
 class RedisRepository:
     @classmethod
-    def add_user(cls, user: RedisUser):
-        if user is None:
-            raise ValueError("User cannot be None")
+    def add_user(cls, id_token: str, uid: str, expiration_datetime: datetime):
+        user = RedisUser(
+            id_token=id_token,
+            uid=uid,
+            expiration_datetime=expiration_datetime
+        )
         user.save()
 
     @classmethod
