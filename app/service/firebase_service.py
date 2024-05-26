@@ -97,6 +97,12 @@ class FirebaseService:
             response = firebase_auth.create_user_with_email_and_password(creds.email, creds.password)
             fb_response = FirebaseParser.parse_sign_in(response)
 
+            # Gets expiration datetime utc (1 hour from now - 5 minutes)
+            expiration_datetime = datetime.now(timezone.utc) + timedelta(seconds=(int(fb_response.expires_in) - 300))
+
+            # Adds registry to cache
+            RedisRepository.add_user(fb_response.id_token, fb_response.uid, expiration_datetime)
+
             return jsonify(fb_response.__dict__), 200
 
         except HTTPError as http_error:
