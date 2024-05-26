@@ -1,15 +1,14 @@
-# Packages
-from datetime import datetime, timedelta, timezone
 import json
-
-from flask import jsonify, current_app
-from requests.exceptions import HTTPError
 import pyrebase
 import firebase_admin
+
+from datetime import datetime, timedelta, timezone
 from firebase_admin import credentials
+from flask import jsonify, current_app, make_response, Response
+from requests.exceptions import HTTPError
 
 from app.core import FirebaseParser
-from app.schema import FirebaseCredentialsRequest
+from app.schema import FirebaseCredentialsRequest, FirebaseSignInResponse
 from app.respository import RedisRepository
 
 
@@ -68,13 +67,7 @@ class FirebaseService:
             response = firebase_auth.sign_in_with_email_and_password(creds.email, creds.password)
             fb_response = FirebaseParser.parse_sign_in(response)
 
-            # Gets expiration datetime utc (1 hour from now - 5 minutes)
-            expiration_datetime = datetime.now(timezone.utc) + timedelta(seconds=(int(fb_response.expires_in) - 300))
-
-            # Adds registry to cache
-            RedisRepository.add_user(fb_response.id_token, fb_response.uid, expiration_datetime)
-
-            return jsonify(fb_response.__dict__), 200
+            return cls.__make_service_response(fb_response)
 
         except HTTPError as http_ex:
             current_app.logger.error(f"Firebase API sign-in error response has occurred {http_ex}")
@@ -97,13 +90,7 @@ class FirebaseService:
             response = firebase_auth.create_user_with_email_and_password(creds.email, creds.password)
             fb_response = FirebaseParser.parse_sign_in(response)
 
-            # Gets expiration datetime utc (1 hour from now - 5 minutes)
-            expiration_datetime = datetime.now(timezone.utc) + timedelta(seconds=(int(fb_response.expires_in) - 300))
-
-            # Adds registry to cache
-            RedisRepository.add_user(fb_response.id_token, fb_response.uid, expiration_datetime)
-
-            return jsonify(fb_response.__dict__), 200
+            return cls.__make_service_response(fb_response)
 
         except HTTPError as http_error:
             current_app.logger.error(f"Firebase API sign-up error response has occurred {http_error}")
@@ -117,3 +104,33 @@ class FirebaseService:
         except Exception as ex:
             current_app.logger.error(f"Unable to sign up to firebase {ex}")
             return jsonify({"message": "Unable to sign up to firebase"}), 500
+
+    @staticmethod
+    def __add_cookie(response: Response, name: str, value: str, max_age: int):
+        response.set_cookie(
+            key=name,
+            value=value,
+            max_age=max_age,  # Lifetime of the cookie in seconds
+            httponly=True,  # Makes the cookie inaccessible to JavaScript on the client side
+            secure=False,  # Should be set to True in production to send only over HTTPS
+            samesite='Strict'  # The cookie will not be sent with cross-origin requests
+        )
+
+    @classmethod
+    def __make_service_response(cls, fb_response: FirebaseSignInResponse):
+
+        # Gets expiration datetime utc (1 hour from now - 5 minutes)
+        expiration_seconds = int(fb_response.expires_in) - 300
+        expiration_datetime = datetime.now(timezone.utc) + timedelta(seconds=expiration_seconds)
+
+        # Adds registry to cache
+        RedisRepository.add_user(fb_response.id_token, fb_response.uid, expiration_datetime)
+
+        # Returns only expire in seconds information
+        service_response = make_response(jsonify({"expires_in": fb_response.expires_in}), 200)
+
+        cls.__add_cookie(service_response, 'X-Access-Token', fb_response.id_token, expiration_seconds)
+        cls.__add_cookie(service_response, 'X-Refresh-Token', fb_response.refresh_token, expiration_seconds)
+        cls.__add_cookie(service_response, 'X-Uid', fb_response.uid, expiration_seconds)
+
+        return service_response
