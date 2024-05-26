@@ -1,4 +1,5 @@
 from datetime import datetime
+from redis_om import Migrator
 
 from app.model import RedisUser
 
@@ -27,3 +28,8 @@ class RedisRepository:
     @classmethod
     def get_user_by_id(cls, pk):
         return RedisUser.get(pk)
+
+
+def initialize_database(connection):
+    RedisUser.Meta.database = connection
+    Migrator().run()
