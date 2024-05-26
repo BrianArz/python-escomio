@@ -14,14 +14,20 @@ class RedisService:
         cls.app = app
         cls.redis_connection = cls.get_redis_connection()
 
-    @staticmethod
-    def create_redis_connection():
+    @classmethod
+    def __get_redis_uri(cls):
+        """
+        Private method to construct the Redis URI from the Flask app config.
+        """
+        return f"{current_app.config['REDIS_URI']}:{current_app.config['REDIS_PORT']}"
+
+    @classmethod
+    def create_redis_connection(cls):
         """
         Creates and returns a Redis connection instance.
         """
         try:
-            redis_url = current_app.config.get('REDIS_URL', 'redis://localhost:6379')
-            return redis.Redis.from_url(redis_url)
+            return redis.Redis.from_url(cls.__get_redis_uri())
 
         except Exception as e:
             current_app.logger.error(f"Error creating redis connection: {e}")
