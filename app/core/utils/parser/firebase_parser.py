@@ -14,8 +14,9 @@ class FirebaseParser:
             expires_in = response.get('expiresIn')
             refresh_token = response.get('refreshToken')
             id_token = response.get('idToken')
+            uid = response.get('localId')
 
-            return FirebaseSignInResponse(expires_in, refresh_token, id_token)
+            return FirebaseSignInResponse(expires_in, refresh_token, id_token, uid)
 
         except Exception as e:
             current_app.logger.error(f"Unable to parse response {e}")
