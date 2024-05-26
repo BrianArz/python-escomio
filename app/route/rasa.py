@@ -1,12 +1,8 @@
-# Packages
-from flask import current_app, Blueprint, jsonify, request
-import requests
+from flask import Blueprint, jsonify, request
 
-# Local files
-from app.core import authorize
-from app.core import parse_test_question
+from app.core import authorize, EndpointValidators, ExecuteRequest
+from app.service import RasaService
 
-# Defines the blueprint
 rasa_bp = Blueprint('rasa', __name__)
 
 
@@ -15,29 +11,12 @@ rasa_bp = Blueprint('rasa', __name__)
 def test_question():
     """
     Asks simple question to rasa server
-
-    :parameter: User name and user question
-    :return: Rasa server response
     """
+    information, error_response, status_code = EndpointValidators.validate_rasa_question(request)
 
-    # Get sender and message from HTTP Request
-    sender = request.json.get('sender')
-    message = request.json.get('message')
+    if error_response:
+        return error_response, status_code
 
-    # Validates empty request body
-    if sender is None or message is None:
-        return jsonify({'message': 'Missing Information'}), 400
+    return ExecuteRequest.execute(RasaService.ask_question, information)
 
-    api_url = \
-        f"{current_app.config["RASA_URI"]}:{current_app.config["RASA_PORT"]}/{current_app.config["TEST_QUESTION"]}"
 
-    try:
-        response = requests.post(api_url, json={'sender': sender, 'message': message})
-        response_json = response.json()
-
-        # Returns first response of request
-        question = parse_test_question(response_json[0])
-        return jsonify(question.__dict__), 200
-
-    except Exception as error:
-        return jsonify({'Internal server error': error}), 500

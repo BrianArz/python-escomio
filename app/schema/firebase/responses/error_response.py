@@ -13,7 +13,7 @@ class ErrorElement:
         self.reason = reason
 
 
-class FirebaseError:
+class FirebaseErrorResponse:
     code: int
     errors: List[ErrorElement]
     message: str

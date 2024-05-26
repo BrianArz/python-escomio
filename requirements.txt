@@ -4,3 +4,4 @@ gunicorn
 firebase-admin
 setuptools
 flask-cors
+redis-om

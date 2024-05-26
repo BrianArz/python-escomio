@@ -1,7 +1,7 @@
 
-# Firebase
-from .firebase.firebase_error import FirebaseError
-from .firebase.sign_in_response import SignInResponse
+from .firebase.responses.error_response import FirebaseErrorResponse
+from .firebase.responses.sign_in_response import FirebaseSignInResponse
+from .firebase.requests.credentials_request import FirebaseCredentialsRequest
 
-# Rasa
-from .rasa.test_question_response import TestQuestionResponse
+from .rasa.responses.question_response import RasaQuestionResponse
+from .rasa.requests.ask_request import RasaAskRequest
