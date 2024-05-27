@@ -22,6 +22,8 @@ class RasaService:
         Handles asking a question to the Rasa service and returns a JSON response.
         """
         try:
+            current_app.logger.info("Asking rasa...")
+
             response = requests.post(
                 f"{cls.__get_rasa_uri()}/{service_constants.API_RASA_ASK}",
                 json=information.__dict__
@@ -31,6 +33,8 @@ class RasaService:
             response_json = response.json()
 
             question = RasaParser.parse_test_question(response_json[0])
+
+            current_app.logger.info("Question successfully asked.")
             return jsonify(question.__dict__), 200
 
         except ConnectionError as conn_ex:

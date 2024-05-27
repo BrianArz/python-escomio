@@ -25,6 +25,8 @@ class FirebaseService:
         Initializes pyrebase application with configuration file
         """
         try:
+            current_app.logger.info("Initializing firebase app...")
+
             with open('instance/firebase_config.json', 'r') as config_file:
                 config = json.load(config_file)
 
@@ -40,6 +42,8 @@ class FirebaseService:
         Initializes firebase sdk admin app
         """
         try:
+            current_app.logger.info("Initializing firebase ask admin...")
+
             cred = credentials.Certificate("instance/firebase_admin_key.json")
             return firebase_admin.initialize_app(cred)
 
@@ -69,7 +73,10 @@ class FirebaseService:
             response = firebase_auth.sign_in_with_email_and_password(creds.email, creds.password)
             fb_response = FirebaseParser.parse_sign_in(response)
 
-            return cls.__make_service_response(fb_response)
+            service_response = cls.__make_service_response(fb_response)
+
+            current_app.logger.info(f"{creds.email} signed in.")
+            return service_response
 
         except HTTPError as http_ex:
             current_app.logger.error(f"Firebase API sign-in error response has occurred {http_ex}")
@@ -87,12 +94,17 @@ class FirebaseService:
     @classmethod
     def sign_up(cls, creds: FirebaseCredentialsRequest):
         try:
+            current_app.logger.info(f"{creds.email} signing up...")
+
             firebase_auth = cls.get_firebase_auth()
 
             response = firebase_auth.create_user_with_email_and_password(creds.email, creds.password)
             fb_response = FirebaseParser.parse_sign_in(response)
 
-            return cls.__make_service_response(fb_response)
+            service_response = cls.__make_service_response(fb_response)
+
+            current_app.logger.info(f"{creds.email} signed up.")
+            return service_response
 
         except HTTPError as http_error:
             current_app.logger.error(f"Firebase API sign-up error response has occurred {http_error}")
@@ -121,8 +133,6 @@ class FirebaseService:
     @classmethod
     def __make_service_response(cls, fb_response: FirebaseSignInResponse):
 
-        current_app.logger.info(f"Making auth service response...")
-
         # Gets expiration datetime utc (1 hour from now - 5 minutes)
         expiration_seconds = int(fb_response.expires_in) - 300
         expiration_datetime = datetime.now(timezone.utc) + timedelta(seconds=expiration_seconds)
@@ -137,6 +147,4 @@ class FirebaseService:
         cls.__add_cookie(service_response, 'X-Refresh-Token', fb_response.refresh_token, expiration_seconds)
         cls.__add_cookie(service_response, 'X-Uid', fb_response.uid, expiration_seconds)
 
-        current_app.logger.info(f"Auth service response made successfully.")
-        current_app.logger.info("User signed in.")
         return service_response
