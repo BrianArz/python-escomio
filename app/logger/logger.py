@@ -18,7 +18,7 @@ def configure_logging(app):
     # Create and configure the console handler
     console_handler = logging.StreamHandler()
     console_handler.setLevel(logging.WARNING)
-    console_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levellevel)s - %(message)s')
+    console_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     console_handler.setFormatter(console_formatter)
 
     # Filter to ensure that WARNING, ERROR, and CRITICAL appear on the console
@@ -32,7 +32,7 @@ def configure_logging(app):
     file_handler = TimedRotatingFileHandler(log_file_path, when="midnight", interval=1, backupCount=30)
     file_handler.suffix = "%Y_%m_%d"  # Date format for the file name, without .txt
     file_handler.setLevel(logging.INFO)
-    file_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levellevel)s - %(message)s')
+    file_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     file_handler.setFormatter(file_formatter)
 
     # Add the configured handlers to the application logger
