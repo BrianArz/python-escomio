@@ -39,11 +39,10 @@ def create_app():
         # Activates all level logging
         configure_logging(app)
 
-        # Initializes firebase services
-        FirebaseService.init_app(app)
-
-        # Intializes redis services
         with app.app_context():
+            # Initializes firebase services
+            FirebaseService.init_app(app)
+            # Initializes redis connection
             initialize_database(RedisConnection.init_connection())
 
         return app
