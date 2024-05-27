@@ -9,6 +9,7 @@ from app.route import health_bp, auth_bp, rasa_bp
 from app.service import FirebaseService
 from app.connection import RedisConnection
 from app.respository import initialize_database
+from app.logger import configure_logging
 
 # Global variables
 firebase_app = None
@@ -36,13 +37,12 @@ def create_app():
         app.register_blueprint(rasa_bp, url_prefix='/rasa')
 
         # Activates all level logging
-        app.logger.setLevel(logging.DEBUG)
+        configure_logging(app)
 
-        # Initializes firebase services
-        FirebaseService.init_app(app)
-
-        # Intializes redis services
         with app.app_context():
+            # Initializes firebase services
+            FirebaseService.init_app(app)
+            # Initializes redis connection
             initialize_database(RedisConnection.init_connection())
 
         return app
