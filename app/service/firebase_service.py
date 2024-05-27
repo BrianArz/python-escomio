@@ -69,7 +69,6 @@ class FirebaseService:
             response = firebase_auth.sign_in_with_email_and_password(creds.email, creds.password)
             fb_response = FirebaseParser.parse_sign_in(response)
 
-            current_app.logger.info(f"{creds.email} signed in.")
             return cls.__make_service_response(fb_response)
 
         except HTTPError as http_ex:
@@ -139,5 +138,5 @@ class FirebaseService:
         cls.__add_cookie(service_response, 'X-Uid', fb_response.uid, expiration_seconds)
 
         current_app.logger.info(f"Auth service response made successfully.")
-
+        current_app.logger.info("User signed in.")
         return service_response
