@@ -1,6 +1,6 @@
 import os
 import logging
-from logging.handlers import RotatingFileHandler
+from logging.handlers import TimedRotatingFileHandler
 
 
 def configure_logging(app):
@@ -9,8 +9,8 @@ def configure_logging(app):
     if not os.path.exists(log_directory):
         os.makedirs(log_directory)
 
-    # Ruta completa del archivo de logs
-    log_file_path = os.path.join(log_directory, "info_logs.txt")
+    # Ruta base del archivo de logs
+    log_file_path = os.path.join(log_directory, "log")
 
     # Eliminar todos los manejadores existentes del logger de la aplicación
     del app.logger.handlers[:]
@@ -28,9 +28,10 @@ def configure_logging(app):
 
     console_handler.addFilter(WarningErrorCriticalFilter())
 
-    # Crear y configurar el manejador de archivo
-    file_handler = RotatingFileHandler(log_file_path, maxBytes=10000, backupCount=1)
-    file_handler.setLevel(logging.DEBUG)
+    # Crear y configurar el manejador de archivo con rotación diaria
+    file_handler = TimedRotatingFileHandler(log_file_path, when="midnight", interval=1, backupCount=30)
+    file_handler.suffix = "%Y_%m_%d"  # Formato de fecha para el nombre del archivo, sin .txt
+    file_handler.setLevel(logging.INFO)
     file_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     file_handler.setFormatter(file_formatter)
 
