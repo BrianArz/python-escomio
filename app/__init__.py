@@ -1,4 +1,3 @@
-import logging
 import os
 
 from flask import Flask
@@ -23,9 +22,16 @@ def create_app():
     app = Flask(__name__, instance_relative_config=True)
 
     try:
-        # This allows access from any origin. To restrict to certain domain replace "*" with url
-        CORS(app)
-        app.config['CORS_HEADERS'] = 'Content-Type'
+        # This allows access from any localhost domain and subdomain.
+        CORS(app, supports_credentials=True, origins=["http://localhost:*"], methods=["*"])
+
+        @app.after_request
+        def after_request(response):
+            if response.headers.get('Access-Control-Allow-Headers'):
+                return response
+            else:
+                response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization, XCSRF-Token')
+            return response
 
         # Configuration loading
         environment = os.getenv('FLASK_ENV', 'development')
