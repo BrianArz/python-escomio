@@ -1,9 +1,7 @@
 import json
 import pyrebase
-import firebase_admin
 
 from datetime import datetime, timedelta, timezone
-from firebase_admin import credentials
 from flask import jsonify, current_app, make_response, Response
 from requests.exceptions import HTTPError
 
@@ -17,7 +15,6 @@ class FirebaseService:
     def init_app(cls, app):
         cls.app = app
         cls.firebase_app = cls._init_firebase()
-        cls.firebase_admin = cls._init_firebase_admin()
 
     @staticmethod
     def _init_firebase():
@@ -35,21 +32,6 @@ class FirebaseService:
         except json.JSONDecodeError as json_ex:
             current_app.logger.error(f"Invalid JSON configuration for Firebase: {json_ex}")
             raise ValueError("Invalid JSON configuration for Firebase.") from json_ex
-
-    @staticmethod
-    def _init_firebase_admin():
-        """
-        Initializes firebase sdk admin app
-        """
-        try:
-            current_app.logger.info("Initializing firebase ask admin...")
-
-            cred = credentials.Certificate("instance/firebase_admin_key.json")
-            return firebase_admin.initialize_app(cred)
-
-        except FileNotFoundError as file_ex:
-            current_app.logger.error(f"Firebase admin credential file not found: {file_ex}")
-            raise FileNotFoundError("Firebase admin credentials file not found.")
 
     @staticmethod
     def get_firebase_auth():
