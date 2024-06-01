@@ -1,7 +1,6 @@
 flask
 pyrebase4
 gunicorn
-firebase-admin
 setuptools
 flask-cors
 redis-om
