@@ -108,8 +108,8 @@ class FirebaseService:
             value=value,
             max_age=max_age,  # Lifetime of the cookie in seconds
             httponly=True,  # Makes the cookie inaccessible to JavaScript on the client side
-            secure=False,  # Should be set to True in production to send only over HTTPS
-            samesite='Strict'  # The cookie will not be sent with cross-origin requests
+            secure=current_app.config['COOKIE_SECURE'],  # Should be set to True in production to send only over HTTPS
+            samesite=current_app.config['COOKIE_SAME_SITE']  # The cookie will not be sent with cross-origin requests
         )
 
     @classmethod
