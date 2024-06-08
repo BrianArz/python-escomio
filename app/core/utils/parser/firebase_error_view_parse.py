@@ -1,4 +1,4 @@
-class ErrorViewAlertParse:
+class FirebaseErrorViewParse:
 
     case_map = {
         "INVALID_LOGIN_CREDENTIALS": "Credenciales inválidas",
@@ -6,5 +6,5 @@ class ErrorViewAlertParse:
     }
 
     @staticmethod
-    def get_firebase_view_error(input_str):
-        return ErrorViewAlertParse.case_map.get(input_str, "Ocurrió un error en el servidor")
+    def view_alert_parse(input_str):
+        return FirebaseErrorViewParse.case_map.get(input_str, "Ocurrió un error en el servidor")
