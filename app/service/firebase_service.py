@@ -8,6 +8,7 @@ from requests.exceptions import HTTPError
 from app.core import FirebaseParser
 from app.schema import FirebaseCredentialsRequest, FirebaseSignInResponse
 from app.respository import RedisRepository
+from app.core import FirebaseErrorViewParse
 
 
 class FirebaseService:
@@ -61,13 +62,13 @@ class FirebaseService:
             return service_response
 
         except HTTPError as http_ex:
-            current_app.logger.error(f"Firebase API sign-in error response has occurred {http_ex}")
-
             error_response = FirebaseParser.parse_error(http_ex.strerror)
+
             if error_response is None:
                 return jsonify({"message": "Internal Server Error"}), 500
 
-            return jsonify({"message": error_response.message}), 500
+            current_app.logger.error(f"Firebase API sign-in error response has occurred: {error_response.message}")
+            return jsonify({"message": FirebaseErrorViewParse.view_alert_parse(error_response.message)}), 500
 
         except Exception as ex:
             current_app.logger.error(f"Unable to sign in to firebase {ex}")
