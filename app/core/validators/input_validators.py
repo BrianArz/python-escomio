@@ -11,9 +11,11 @@ class InputValidators:
         return False
 
     @staticmethod
-    def is_valid_length(s: str, min_length: int = None, max_length: int = None) -> bool:
+    def is_valid_string(s: str, min_length: int = None, max_length: int = None, regex: str = None) -> bool:
         if min_length is not None and len(s) < min_length:
             return False
         if max_length is not None and len(s) > max_length:
+            return False
+        if regex is not None and not re.match(regex, s):
             return False
         return True
