@@ -1,7 +1,8 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, make_response
 
 from app.service import FirebaseService
 from app.core import authorize, EndpointValidators, ExecuteRequest
+from app.respository import RedisRepository
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -28,6 +29,18 @@ def sign_up():
         return error_response, status_code
 
     return ExecuteRequest.execute(FirebaseService.sign_up, credentials)
+
+
+@authorize
+@auth_bp.route('/logout', methods=['DELETE'])
+def logout():
+    """
+    Deletes user from cache
+    """
+    uid = request.cookies.get('X-Uid', None)
+    RedisRepository.delete_user(uid)
+
+    return make_response("", 200)
 
 
 @auth_bp.route('/authorized-hello-world', methods=['GET'])

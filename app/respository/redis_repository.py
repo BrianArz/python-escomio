@@ -23,6 +23,8 @@ class RedisRepository:
 
     @classmethod
     def delete_user(cls, pk):
+        if pk is None:
+            return
         RedisUser.delete(pk)
 
     @classmethod
