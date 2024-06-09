@@ -9,9 +9,7 @@ auth_bp = Blueprint('auth', __name__)
 
 @auth_bp.route('/sign-in', methods=['POST'])
 def login():
-    """
-    Signs into FirebaseAuth with user credentials
-    """
+
     credentials, error_response, status_code = EndpointValidators.validate_user_credentials(request)
     if error_response:
         return error_response, status_code
@@ -21,22 +19,22 @@ def login():
 
 @auth_bp.route('/sign-up', methods=['POST'])
 def sign_up():
-    """
-    Creates a new user in FirebaseAuth with email and password
-    """
-    credentials, error_response, status_code = EndpointValidators.validate_user_credentials(request)
-    if error_response:
-        return error_response, status_code
 
-    return ExecuteRequest.execute(FirebaseService.sign_up, credentials)
+    try:
+        sign_up_data, error_response, status_code = EndpointValidators.validate_sign_up(request)
+        if error_response:
+            return error_response, status_code
+
+        return make_response("Si jaló", 200)
+
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500
 
 
 @authorize
 @auth_bp.route('/logout', methods=['DELETE'])
 def logout():
-    """
-    Deletes user from cache
-    """
+
     uid = request.cookies.get('X-Uid', None)
     RedisRepository.delete_user(uid)
 
@@ -46,4 +44,5 @@ def logout():
 @auth_bp.route('/authorized-hello-world', methods=['GET'])
 @authorize
 def authorized_welcome():
+
     return jsonify({'message': 'This is an authorized Hello World!'}), 200
