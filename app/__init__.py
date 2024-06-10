@@ -6,7 +6,7 @@ from flask_cors import CORS
 # Local files
 from app.route import health_bp, auth_bp, rasa_bp
 from app.service import FirebaseService
-from app.connection import RedisConnection
+from app.connection import RedisConnection, MongoDbConnection
 from app.respository import initialize_database
 from app.logger import configure_logging
 
@@ -50,6 +50,8 @@ def create_app():
             FirebaseService.init_app(app)
             # Initializes redis connection
             initialize_database(RedisConnection.init_connection())
+            # Initializes mongo connection
+            MongoDbConnection.init_connection()
 
         return app
 

@@ -4,3 +4,4 @@ gunicorn
 setuptools
 flask-cors
 redis-om
+mongoengine
