@@ -8,3 +8,5 @@ from .validators.input_validators import InputValidators
 from .decorators.authorize import authorize
 
 from .services.execute_request import ExecuteRequest
+
+from .bussiness_objects.auth_bo import AuthBo
