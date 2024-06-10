@@ -3,6 +3,7 @@ class FirebaseErrorViewParse:
     case_map = {
         "INVALID_LOGIN_CREDENTIALS": "Credenciales inválidas",
         "INVALID_EMAIL": "Credenciales inválidas",
+        "EMAIL_EXISTS": "El correo electrónico ya está registrado"
     }
 
     @staticmethod
