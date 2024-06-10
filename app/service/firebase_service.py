@@ -7,8 +7,9 @@ from requests.exceptions import HTTPError
 
 from app.core import FirebaseParser
 from app.schema import FirebaseCredentialsRequest, FirebaseSignInResponse
-from app.respository import RedisRepository
-from app.core import FirebaseErrorViewParse
+from app.respository import RedisRepository, MongoUserRepository
+from app.core import FirebaseErrorViewParse, AuthBo
+from app.model import CreateAccountRequest
 
 
 class FirebaseService:
@@ -75,14 +76,21 @@ class FirebaseService:
             return jsonify({"message": "Unable to sign in to firebase"}), 500
 
     @classmethod
-    def sign_up(cls, creds: FirebaseCredentialsRequest):
+    def sign_up(cls, creds: CreateAccountRequest):
         try:
             current_app.logger.info(f"{creds.email} signing up...")
+
+            validation_response = AuthBo.validate_user(creds)
+
+            if not validation_response.is_valid:
+                return jsonify({"message": validation_response.message}), 400
 
             firebase_auth = cls.get_firebase_auth()
 
             response = firebase_auth.create_user_with_email_and_password(creds.email, creds.password)
             fb_response = FirebaseParser.parse_sign_in(response)
+
+            MongoUserRepository.save_user(creds.username, creds.email, int(creds.escom_id), fb_response.uid, 1)
 
             service_response = cls.__make_service_response(fb_response)
 
@@ -90,13 +98,13 @@ class FirebaseService:
             return service_response
 
         except HTTPError as http_error:
-            current_app.logger.error(f"Firebase API sign-up error response has occurred {http_error}")
-
             error_response = FirebaseParser.parse_error(http_error.strerror)
+
             if error_response is None:
                 return jsonify({"message": "Internal Server Error"}), 500
 
-            return jsonify({"message": error_response.message}), 500
+            current_app.logger.error(f"Firebase API sign-up error response has occurred {error_response.message}")
+            return jsonify({"message": FirebaseErrorViewParse.view_alert_parse(error_response.message)}), 500
 
         except Exception as ex:
             current_app.logger.error(f"Unable to sign up to firebase {ex}")
