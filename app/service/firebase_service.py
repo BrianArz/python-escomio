@@ -90,7 +90,7 @@ class FirebaseService:
             response = firebase_auth.create_user_with_email_and_password(creds.email, creds.password)
             fb_response = FirebaseParser.parse_sign_in(response)
 
-            MongoUserRepository.save_user(creds.username, int(creds.escom_id), fb_response.uid, 1)
+            MongoUserRepository.save_user(creds.username, creds.escom_id, fb_response.uid, 1)
 
             service_response = cls.__make_service_response(fb_response)
 
