@@ -1,3 +1,5 @@
+import urllib.parse
+
 from mongoengine import connect
 from pymongo.errors import ServerSelectionTimeoutError
 from flask import current_app
@@ -21,7 +23,7 @@ class MongoDbConnection:
 
             cls._mongo_connection = connect(
                 db=mongo_database,
-                host=f'mongodb://{mongo_user}:{mongo_password}@{mongo_uri}:{mongo_port}/{mongo_database}?authSource={mongo_source}',
+                host=f'mongodb://{urllib.parse.quote_plus(mongo_user)}:{urllib.parse.quote_plus(mongo_password)}@{mongo_uri}:{mongo_port}/{mongo_database}?authSource={mongo_source}',
             )
 
         try:
