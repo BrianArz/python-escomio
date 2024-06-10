@@ -25,7 +25,7 @@ def sign_up():
         if error_response:
             return error_response, status_code
 
-        return make_response("Si jaló", 200)
+        return ExecuteRequest.execute(FirebaseService.sign_up, sign_up_data)
 
     except Exception as e:
         return jsonify({'message': str(e)}), 500
