@@ -9,7 +9,7 @@ from app.core import FirebaseParser
 from app.schema import FirebaseCredentialsRequest, FirebaseSignInResponse
 from app.respository import RedisRepository, MongoUserRepository
 from app.core import FirebaseErrorViewParse, AuthBo
-from app.model import CreateAccountRequest
+from app.model import CreateAccountRequest, UserViewInfo
 
 
 class FirebaseService:
@@ -57,7 +57,12 @@ class FirebaseService:
             response = firebase_auth.sign_in_with_email_and_password(creds.email, creds.password)
             fb_response = FirebaseParser.parse_sign_in(response)
 
-            service_response = cls.__make_service_response(fb_response)
+            user = MongoUserRepository.get_user_by_uid(fb_response.uid)
+
+            # Information that client will save on localstorage
+            user_view_info = UserViewInfo(username=user.username, role=user.role)
+
+            service_response = cls.__make_service_response(fb_response, user_view_info)
 
             current_app.logger.info(f"{creds.email} signed in.")
             return service_response
@@ -92,7 +97,10 @@ class FirebaseService:
 
             MongoUserRepository.save_user(creds.username, creds.escom_id, fb_response.uid, 1)
 
-            service_response = cls.__make_service_response(fb_response)
+            # Information that client will save on localstorage
+            user_view_info = UserViewInfo(username=creds.username, role=1)
+
+            service_response = cls.__make_service_response(fb_response, user_view_info)
 
             current_app.logger.info(f"{creds.email} signed up.")
             return service_response
@@ -122,7 +130,7 @@ class FirebaseService:
         )
 
     @classmethod
-    def __make_service_response(cls, fb_response: FirebaseSignInResponse):
+    def __make_service_response(cls, fb_response: FirebaseSignInResponse, user_view_info: UserViewInfo):
 
         # Gets expiration datetime utc (1 hour from now - 5 minutes)
         expiration_seconds = int(fb_response.expires_in) - 300
@@ -132,7 +140,8 @@ class FirebaseService:
         RedisRepository.add_user(fb_response.id_token, fb_response.uid, expiration_datetime)
 
         # Returns only expire in seconds information
-        service_response = make_response(jsonify({"expires_in": fb_response.expires_in}), 200)
+        user_view_info.set_expires_in(fb_response.expires_in)
+        service_response = make_response(jsonify(user_view_info.__dict__), 200)
 
         cls.__add_cookie(service_response, 'X-Access-Token', fb_response.id_token, expiration_seconds)
         cls.__add_cookie(service_response, 'X-Refresh-Token', fb_response.refresh_token, expiration_seconds)
