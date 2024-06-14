@@ -1,5 +1,5 @@
 from functools import wraps
-from flask import request, jsonify, current_app
+from flask import request, jsonify, current_app, make_response
 
 from app.respository import RedisRepository
 
@@ -16,16 +16,16 @@ def authorize(f):
             uid = request.cookies.get('X-Uid', None)
 
             if access_token is None or uid is None:
-                return jsonify({'message': 'Unauthorized request'}), 401
+                return make_response(jsonify({'message': 'Unauthorized request'})), 401
 
             redis_user = RedisRepository.get_user_by_id(uid)
 
             if redis_user is None or redis_user.id_token != access_token:
-                return jsonify({'message': 'Unauthorized request'}), 401
+                return make_response(jsonify({'message': 'Unauthorized request'})), 401
 
         except Exception as ex:
             current_app.logger.error(f"Unable to obtain auth cookies information: {ex}")
-            return jsonify({'message': 'Unauthorized'}), 401
+            return make_response(jsonify({'message': 'Unauthorized request'})), 401
 
         return f(*args, **kwargs)
 

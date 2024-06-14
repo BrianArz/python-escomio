@@ -7,9 +7,6 @@ from app.schema import FirebaseSignInResponse, FirebaseErrorResponse
 class FirebaseParser:
     @classmethod
     def parse_sign_in(cls, response: json) -> FirebaseSignInResponse:
-        """
-        Parses Firebase SingIn response
-        """
         try:
             expires_in = response.get('expiresIn')
             refresh_token = response.get('refreshToken')
@@ -24,9 +21,6 @@ class FirebaseParser:
 
     @classmethod
     def parse_error(cls, error: str) -> FirebaseErrorResponse:
-        """
-        Parses Firebase error string
-        """
         try:
             error_json = json.loads(error)
 
@@ -39,3 +33,17 @@ class FirebaseParser:
         except Exception as e:
             current_app.logger.error(f"Unable to parse error response {e}")
             return FirebaseErrorResponse(500, [], "Unable to parse error response")
+        
+    @classmethod
+    def parse_refresh(cls, response: json) -> FirebaseSignInResponse:
+        try:
+            expires_in = '3600'
+            refresh_token = response.get('refreshToken')
+            id_token = response.get('idToken')
+            uid = response.get('userId')
+
+            return FirebaseSignInResponse(expires_in, refresh_token, id_token, uid)
+        
+        except Exception as e:
+            current_app.logger.error(f"Unable to parse refresh response {e}")
+            raise Exception(f"Unable to parse refresh response {e}") from e

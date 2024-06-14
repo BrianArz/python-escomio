@@ -31,14 +31,30 @@ def sign_up():
         return jsonify({'message': str(e)}), 500
 
 
-@authorize
 @auth_bp.route('/logout', methods=['DELETE'])
+@authorize
 def logout():
 
-    uid = request.cookies.get('X-Uid', None)
+    uid = request.cookies.get('X-Uid', None)    
     RedisRepository.delete_user(uid)
 
     return make_response("", 200)
+
+
+@auth_bp.route('/refresh_token', methods=['GET'])
+@authorize
+def refresh_token():
+
+    try:
+        token = request.cookies.get('X-Refresh-Token', None)
+
+        if token is None:
+            return make_response(jsonify({'message': 'Token de actualización inválido'})), 400
+
+        return ExecuteRequest.execute(FirebaseService.refresh_token, token)
+
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500
 
 
 @auth_bp.route('/authorized-hello-world', methods=['GET'])

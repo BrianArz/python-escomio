@@ -47,7 +47,7 @@ class EndpointValidators:
             return None, jsonify({'message': 'Contraseña inválida'}), 400
 
         return CreateAccountRequest(username, escom_id, email, password), None, None
-
+    
     @classmethod
     def validate_rasa_question(cls, request):
         sender = request.json.get('sender')
