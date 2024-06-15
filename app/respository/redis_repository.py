@@ -13,6 +13,7 @@ class RedisRepository:
             expiration_datetime=expiration_datetime
         )
         user.save()
+        user.expire(3300)  # Saves registry in cache for 55 minutes (in case there's never a logout)
 
     @classmethod
     def clean_user_cache(cls):
