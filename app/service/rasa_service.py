@@ -4,7 +4,7 @@ from requests.exceptions import HTTPError, ConnectionError
 
 from app.core import RasaParser
 from app.model import service_constants
-from app.schema import RasaAskRequest
+from app.schema import RasaAskRequest, RasaQuestionResponse
 
 
 class RasaService:
@@ -14,7 +14,7 @@ class RasaService:
         return f"{current_app.config['RASA_URI']}:{current_app.config['RASA_PORT']}"
 
     @classmethod
-    def ask_question(cls, information: RasaAskRequest):
+    def ask_question(cls, information: RasaAskRequest) -> RasaQuestionResponse:
         try:
             current_app.logger.info("Asking rasa...")
 
@@ -29,16 +29,16 @@ class RasaService:
             question = RasaParser.parse_test_question(response_json)
 
             current_app.logger.info("Question successfully asked.")
-            return jsonify(question.__dict__), 200
+            return question
 
         except ConnectionError as conn_ex:
             current_app.logger.error(f"Unable to connect to rasa service: {conn_ex}")
-            return jsonify({"message": "Unable to connect to rasa service"}), 500
+            raise conn_ex
 
         except HTTPError as http_ex:
             current_app.logger.error(f"A request error has occurred: {http_ex}")
-            return jsonify({"message": "A request error has occurred"}), http_ex.response.status_code
+            raise http_ex
 
         except Exception as ex:
             current_app.logger.error(f"Internal error: {ex}")
-            return jsonify({"message": "Internal server error"}), 500
+            raise ex
