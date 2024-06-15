@@ -5,7 +5,7 @@ from datetime import datetime, timedelta, timezone
 from flask import jsonify, current_app, make_response, Response
 from requests.exceptions import HTTPError
 
-from app.core import FirebaseParser, FirebaseErrorViewParse, AuthBo
+from app.core import FirebaseParser, FirebaseErrorViewParse, AuthBo, UserBo
 from app.schema import FirebaseCredentialsRequest, FirebaseSignInResponse
 from app.respository import RedisRepository, MongoUserRepository
 from app.model import CreateAccountRequest, UserViewInfo
@@ -73,7 +73,8 @@ class FirebaseService:
             response = firebase_auth.create_user_with_email_and_password(creds.email, creds.password)
             fb_response = FirebaseParser.parse_sign_in(response)
 
-            MongoUserRepository.save_user(creds.username, creds.escom_id, fb_response.uid, 1)
+            mongo_user = UserBo.create_user(creds.username, creds.escom_id, fb_response.uid, 1)
+            MongoUserRepository.save_user(mongo_user)
 
             user_view_info = UserViewInfo(username=creds.username, role=1)
 
