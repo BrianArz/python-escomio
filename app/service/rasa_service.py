@@ -11,16 +11,10 @@ class RasaService:
 
     @classmethod
     def __get_rasa_uri(cls):
-        """
-        Private method to construct the Rasa URI from the Flask app config.
-        """
         return f"{current_app.config['RASA_URI']}:{current_app.config['RASA_PORT']}"
 
     @classmethod
     def ask_question(cls, information: RasaAskRequest):
-        """
-        Handles asking a question to the Rasa service and returns a JSON response.
-        """
         try:
             current_app.logger.info("Asking rasa...")
 
@@ -32,7 +26,7 @@ class RasaService:
             response.raise_for_status()
             response_json = response.json()
 
-            question = RasaParser.parse_test_question(response_json[0])
+            question = RasaParser.parse_test_question(response_json)
 
             current_app.logger.info("Question successfully asked.")
             return jsonify(question.__dict__), 200
