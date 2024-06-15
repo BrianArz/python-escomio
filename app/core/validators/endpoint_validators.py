@@ -51,7 +51,7 @@ class EndpointValidators:
     @classmethod
     def validate_rasa_question(cls, request):
         sender = request.json.get('sender')
-        message = request.json.get('message')
+        message = request.json.get('question')
         if not sender or not message:
             return None, jsonify({'message': 'Missing Information'}), 400
         return RasaAskRequest(sender, message), None, None
