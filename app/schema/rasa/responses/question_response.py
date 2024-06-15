@@ -1,7 +1,7 @@
 class RasaQuestionResponse:
-    recipient_id: str
     text: str
+    intent: str
 
-    def __init__(self, recipient_id: str, text: str) -> None:
-        self.recipient_id = recipient_id
+    def __init__(self, intent: str, text: str) -> None:
+        self.intent = intent
         self.text = text

@@ -8,14 +8,19 @@ class RasaParser:
 
     @classmethod
     def parse_test_question(cls, response: json) -> RasaQuestionResponse:
-        """
-        Parses Rasa Test Question response
-        """
         try:
-            recipient_id = response.get('recipient_id')
-            text = response.get('text')
+            texts = []
+            intent = "No detectada"
 
-            return RasaQuestionResponse(recipient_id, text)
+            for message in response:
+                if "text" in message:
+                    texts.append(message["text"])
+                if "custom" in message and "intent" in message["custom"]:
+                    intent = message["custom"]["intent"]
+
+            combined_text = "\n".join(texts) if texts else "De momento no me es posible responder esta pregunta. Por favor intenta con otra."
+
+            return RasaQuestionResponse(intent, combined_text)
 
         except Exception as e:
             current_app.logger.error(f"Unable to parse response {e}")
