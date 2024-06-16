@@ -13,6 +13,7 @@ from .requests.update_message_grade_request import UpdateMessageGradeRequest
 from .mongo.user import MongoUser
 from .mongo.message import  MongoMessage
 from .mongo.conversation import MongoConversation
+from .mongo.suggestion import MongoSuggestion
 
 from .utils.validation_result import ValidationResult
 from .utils.user_view_info import UserViewInfo
