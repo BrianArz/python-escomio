@@ -6,6 +6,13 @@ from app.schema import RasaQuestionResponse
 
 class RasaParser:
 
+    _grade_case_map = {
+        0: "Sin calificar",
+        1: "Satisfactoria",
+        2: "No satisfactoria",
+        3: "Sugerencia"
+    }
+
     @classmethod
     def parse_test_question(cls, response: json) -> RasaQuestionResponse:
         try:
@@ -25,3 +32,7 @@ class RasaParser:
         except Exception as e:
             current_app.logger.error(f"Unable to parse response {e}")
             raise Exception(f"Unable to parse response {e}") from e
+
+    @classmethod
+    def parse_grade(cls, grade: int) -> str:
+        return cls._grade_case_map.get(grade, "No se pudo obtener la calificación")
