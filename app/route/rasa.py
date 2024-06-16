@@ -29,3 +29,13 @@ def add_message_to_conversation():
     return make_response(response)
 
 
+@rasa_bp.route('/update-conversation-name', methods=['POST'])
+@authorize
+def update_conversation_name():
+    information, error_response, status_code = EndpointValidators.validate_update_conversation_name(request)
+
+    if error_response:
+        return error_response, status_code
+
+    response = ChatBo.update_conversation_name(information)
+    return make_response(response)
