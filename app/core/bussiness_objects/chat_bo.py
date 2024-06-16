@@ -2,7 +2,7 @@ from flask import current_app, jsonify
 
 from app.core import ConversationBo
 from app.schema import RasaAskRequest
-from app.model import AddQuestionRequest, UpdateConversationNameRequest
+from app.model import AddQuestionRequest, UpdateConversationNameRequest, DeleteConversationRequest
 
 from app.service.rasa_service import RasaService
 
@@ -49,4 +49,19 @@ class ChatBo:
 
         except Exception as e:
             current_app.logger.error(f"Rasa update conversation name failed: {str(e)}")
+            return jsonify({'message': str(e)}), 500
+
+    @classmethod
+    def delete_conversation(cls, information: DeleteConversationRequest):
+        try:
+            response = ConversationBo.delete_conversation(information.conversation_id, information.sender)
+
+            if response:
+                return jsonify({'message': 'Conversación eliminada correctamente'})
+
+            else:
+                return jsonify({'message': 'No se pudo eliminar la conversación'}), 400
+
+        except Exception as e:
+            current_app.logger.error(f"Rasa delete conversation failed: {str(e)}")
             return jsonify({'message': str(e)}), 500
