@@ -2,7 +2,7 @@ from flask import current_app, jsonify
 
 from app.core import ConversationBo
 from app.schema import RasaAskRequest
-from app.model import AddQuestionRequest, UpdateConversationNameRequest, DeleteConversationRequest
+from app.model import AddQuestionRequest, UpdateConversationNameRequest, DeleteConversationRequest, GetConversationMessagesRequest
 
 from app.service.rasa_service import RasaService
 
@@ -64,4 +64,19 @@ class ChatBo:
 
         except Exception as e:
             current_app.logger.error(f"Rasa delete conversation failed: {str(e)}")
+            return jsonify({'message': str(e)}), 500
+
+    @classmethod
+    def get_conversation_messages(cls, information: GetConversationMessagesRequest):
+        try:
+            response = ConversationBo.get_conversation_messages(information.conversation_id, information.sender)
+
+            if response:
+                return jsonify(response.__dict__), 200
+
+            else:
+                return jsonify({'message': 'No se pudieron obtener los mensaje de la conversación'}), 400
+
+        except Exception as e:
+            current_app.logger.error(f"Rasa get conversation messages failed: {str(e)}")
             return jsonify({'message': str(e)}), 500

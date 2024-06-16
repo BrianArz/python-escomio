@@ -109,7 +109,7 @@ class EndpointValidators:
         return UpdateConversationNameRequest(sender, new_name, conversation_id), None, None
 
     @classmethod
-    def validate_delete_conversation(cls, request):
+    def validate_conversation_id_request(cls, request):
         sender = request.cookies.get('X-Uid', None)
         conversation_id = request.json.get('conversation_id')
 

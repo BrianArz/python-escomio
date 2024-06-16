@@ -47,3 +47,16 @@ class MongoConversationRepository:
 
         except DoesNotExist:
             return False
+
+    @classmethod
+    def get_conversation_messages_by_user(cls, conversation_id: str, user: MongoUser):
+        try:
+            conversation = cls.get_conversation_by_id_and_user(conversation_id, user)
+            if conversation is None:
+                return []
+
+            messages = MongoMessage.objects(conversation_id=conversation_id)
+            return messages
+
+        except DoesNotExist:
+            return []

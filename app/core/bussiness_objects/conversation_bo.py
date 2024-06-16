@@ -1,4 +1,4 @@
-from app.model import MongoConversation, CreateConversationResponse
+from app.model import MongoConversation, CreateConversationResponse, GetConversationMessagesResponse
 from app.respository import MongoUserRepository, MongoConversationRepository
 from app.core import MessageBo
 
@@ -74,3 +74,18 @@ class ConversationBo:
             raise ValueError("No se pudo eliminar la conversación")
 
         return response
+
+    @staticmethod
+    def get_conversation_messages(conversation_id: str, user_id: str):
+
+        user = MongoUserRepository.get_user_by_uid(user_id)
+        if not user:
+            raise ValueError("Usuario no encontrado")
+
+        response = MongoConversationRepository.get_conversation_messages_by_user(conversation_id, user)
+        if not response:
+            raise ValueError("No se pudieron obtener los mensajes de la conversación")
+
+        serialized_messages = [MessageBo.serialize_message(message) for message in response]
+
+        return GetConversationMessagesResponse(conversation_id, serialized_messages)

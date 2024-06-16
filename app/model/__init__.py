@@ -6,6 +6,7 @@ from .requests.create_account_request import CreateAccountRequest
 from .requests.add_question_request import AddQuestionRequest
 from .requests.update_conversation_name_request import UpdateConversationNameRequest
 from .requests.delete_conversation_request import DeleteConversationRequest
+from .requests.get_conversation_messages_request import GetConversationMessagesRequest
 
 from .mongo.user import MongoUser
 from .mongo.message import  MongoMessage
@@ -16,3 +17,4 @@ from .utils.user_view_info import UserViewInfo
 
 from .responses.create_conversation_response import CreateConversationResponse
 from .responses.add_message_response import AddMessageResponse
+from .responses.get_conversation_messages_response import GetConversationMessagesResponse
