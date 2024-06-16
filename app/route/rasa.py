@@ -17,7 +17,7 @@ def create_conversation():
     return make_response(response)
 
 
-@rasa_bp.route('/add-message-to-conversation', methods=['POST'])
+@rasa_bp.route('/add-message-to-conversation', methods=['PUT'])
 @authorize
 def add_message_to_conversation():
     information, error_response, status_code = EndpointValidators.validate_rasa_add_question(request)
@@ -29,7 +29,7 @@ def add_message_to_conversation():
     return make_response(response)
 
 
-@rasa_bp.route('/update-conversation-name', methods=['POST'])
+@rasa_bp.route('/update-conversation-name', methods=['PUT'])
 @authorize
 def update_conversation_name():
     information, error_response, status_code = EndpointValidators.validate_update_conversation_name(request)
@@ -41,7 +41,7 @@ def update_conversation_name():
     return make_response(response)
 
 
-@rasa_bp.route('/delete-conversation', methods=['POST'])
+@rasa_bp.route('/delete-conversation', methods=['DELETE'])
 @authorize
 def delete_conversation():
     information, error_response, status_code = EndpointValidators.validate_delete_conversation(request)
