@@ -5,6 +5,7 @@ from .constants import service_constants
 from .requests.create_account_request import CreateAccountRequest
 from .requests.add_question_request import AddQuestionRequest
 from .requests.update_conversation_name_request import UpdateConversationNameRequest
+from .requests.delete_conversation_request import DeleteConversationRequest
 
 from .mongo.user import MongoUser
 from .mongo.message import  MongoMessage
