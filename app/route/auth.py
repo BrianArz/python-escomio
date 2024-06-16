@@ -41,7 +41,7 @@ def logout():
     return make_response("", 200)
 
 
-@auth_bp.route('/refresh_token', methods=['GET'])
+@auth_bp.route('/refresh_token', methods=['PATCH'])
 @authorize
 def refresh_token():
 
