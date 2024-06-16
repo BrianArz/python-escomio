@@ -1,4 +1,4 @@
-class DeleteConversationRequest:
+class ConversationIdRequest:
     conversation_id: str
     sender: str
 
