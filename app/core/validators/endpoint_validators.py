@@ -1,15 +1,16 @@
 from flask import jsonify
 
 from app.schema import RasaAskRequest, FirebaseCredentialsRequest
-from app.model import CreateAccountRequest, AddQuestionRequest, UpdateConversationNameRequest, DeleteConversationRequest
+from app.model import CreateAccountRequest, AddQuestionRequest, UpdateConversationNameRequest, ConversationIdRequest, MessageIdRequest
 from .input_validators import InputValidators
+from ...model.requests.update_message_grade_request import UpdateMessageGradeRequest
 
 
 class EndpointValidators:
 
     mongo_id_regex = r"^[a-fA-F0-9]{24}$"
     username_regex = r'^[a-zA-Z0-9_]+$'
-    escom_id_regex = r'^[0-9]*$'
+    number_regex = r'^[0-9]*$'
     conversation_name_regex = r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]+$'
 
     @classmethod
@@ -41,7 +42,7 @@ class EndpointValidators:
         if not InputValidators.is_valid_string(username, 8, 15, cls.username_regex):
             return None, jsonify({'message': 'Nombre de usuario inválido'}), 400
 
-        if not InputValidators.is_valid_string(escom_id, 8, 15, cls.escom_id_regex):
+        if not InputValidators.is_valid_string(escom_id, 8, 15, cls.number_regex):
             return None, jsonify({'message': 'Número de boleta inválido'}), 400
 
         if not InputValidators.is_valid_email(email):
@@ -122,4 +123,31 @@ class EndpointValidators:
         if not InputValidators.is_valid_string(sender, 5, 100):
             return None, jsonify({'message:': 'Identificador inválido'})
 
-        return DeleteConversationRequest(conversation_id, sender), None, None
+        return ConversationIdRequest(conversation_id, sender), None, None
+
+    @classmethod
+    def validate_message_id_request(cls, request):
+        conversation_id_request, error_response, status_code = cls.validate_conversation_id_request(request)
+
+        if error_response:
+            return error_response, status_code
+
+        message_id = request.json.get('message_id')
+
+        if not InputValidators.is_valid_string(message_id, 5, 24, cls.mongo_id_regex):
+            return None, jsonify({'message': 'Identificador de mensaje inválido'}), 400
+
+        return MessageIdRequest(conversation_id_request.conversation_id, conversation_id_request.sender, message_id), None, None
+
+    @classmethod
+    def validate_update_message_grade(cls, request):
+        message_id_request, error_response, status_code = cls.validate_message_id_request(request)
+
+        if error_response:
+            return error_response, status_code
+
+        new_grade = request.json.get('new_grade')
+        if not InputValidators.is_valid_string(new_grade, 1, 1, cls.number_regex):
+            return None, jsonify({'message': 'Nueva calificación inválida'}), 400
+
+        return UpdateMessageGradeRequest(message_id_request.conversation_id, message_id_request.sender, message_id_request.message_id, new_grade), None, None
