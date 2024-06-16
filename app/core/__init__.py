@@ -14,6 +14,4 @@ from .bussiness_objects.user_bo import UserBo
 from .bussiness_objects.message_bo import MessageBo
 from .bussiness_objects.conversation_bo import ConversationBo
 from .bussiness_objects.chat_bo import ChatBo
-
-
-
+from .bussiness_objects.suggestion_bo import SuggestionBo
