@@ -62,3 +62,14 @@ def get_conversation_messages():
 
     response = ChatBo.get_conversation_messages(information)
     return make_response(response)
+
+
+@rasa_bp.route('/update-message-grade', methods=['PUT'])
+def update_message_grade():
+    information, error_response, status_code = EndpointValidators.validate_update_message_grade(request)
+
+    if error_response:
+        return error_response, status_code
+
+    response = ChatBo.update_message_grade(information)
+    return make_response(response)
