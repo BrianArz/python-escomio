@@ -44,10 +44,21 @@ def update_conversation_name():
 @rasa_bp.route('/delete-conversation', methods=['DELETE'])
 @authorize
 def delete_conversation():
-    information, error_response, status_code = EndpointValidators.validate_delete_conversation(request)
+    information, error_response, status_code = EndpointValidators.validate_conversation_id_request(request)
 
     if error_response:
         return error_response, status_code
 
     response = ChatBo.delete_conversation(information)
+    return make_response(response)
+
+
+@rasa_bp.route('/get-conversation_messages', methods=['GET'])
+def get_conversation_messages():
+    information, error_response, status_code = EndpointValidators.validate_conversation_id_request(request)
+
+    if error_response:
+        return error_response, status_code
+
+    response = ChatBo.get_conversation_messages(information)
     return make_response(response)
