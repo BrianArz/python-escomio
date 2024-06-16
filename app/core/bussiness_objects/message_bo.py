@@ -29,3 +29,13 @@ class MessageBo:
         message.grade = new_grade
         MongoMessageRepository.save_message(message)
         return True
+
+    @staticmethod
+    def serialize_message(message: MongoMessage):
+        return {
+            "asked_question": message.asked_question,
+            "question_answer": message.question_answer,
+            "grade": message.grade,
+            "creation_datetime": message.creation_datetime.isoformat(),
+            "conversation_id": str(message.conversation_id.id)
+        }
