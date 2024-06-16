@@ -45,3 +45,21 @@ class ConversationBo:
         MongoConversationRepository.save_conversation(conversation)
 
         return CreateConversationResponse(str(message.id), str(conversation.id), conversation.name, question_answer)
+
+    @staticmethod
+    def update_conversation_name(conversation_id: str, user_id: str, new_name: str):
+
+        user = MongoUserRepository.get_user_by_uid(user_id)
+
+        if not user:
+            raise ValueError("Usuario no encontrado")
+
+        conversation = MongoConversationRepository.get_conversation_by_id_and_user(conversation_id, user)
+        if not conversation:
+            raise ValueError("Conversación no encontrada")
+
+        conversation.name = new_name
+        MongoConversationRepository.save_conversation(conversation)
+
+        return True
+

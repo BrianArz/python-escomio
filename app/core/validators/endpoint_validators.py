@@ -1,7 +1,7 @@
 from flask import jsonify
 
 from app.schema import RasaAskRequest, FirebaseCredentialsRequest
-from app.model import CreateAccountRequest, AddQuestionRequest
+from app.model import CreateAccountRequest, AddQuestionRequest, UpdateConversationNameRequest
 from .input_validators import InputValidators
 
 
@@ -10,6 +10,7 @@ class EndpointValidators:
     mongo_id_regex = r"^[a-fA-F0-9]{24}$"
     username_regex = r'^[a-zA-Z0-9_]+$'
     escom_id_regex = r'^[0-9]*$'
+    conversation_name_regex = r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]+$'
 
     @classmethod
     def validate_user_credentials(cls, request):
@@ -74,7 +75,7 @@ class EndpointValidators:
         conversation_id = request.json.get('conversation_id')
 
         if not sender or not message or not conversation_id:
-            return None, jsonify({'message': 'Missing Information'}), 400
+            return None, jsonify({'message': 'Información faltante'}), 400
 
         if not InputValidators.is_valid_string(sender, 5, 100):
             return None, jsonify({'message': 'Identificador inválido'}), 400
@@ -86,3 +87,23 @@ class EndpointValidators:
             return None, jsonify({'message': 'Identificador de conversación inválido'}), 400
 
         return AddQuestionRequest(sender, message, conversation_id), None, None
+
+    @classmethod
+    def validate_update_conversation_name(cls, request):
+        sender = request.cookies.get('X-Uid', None)
+        new_name = request.json.get('new_name')
+        conversation_id = request.json.get('conversation_id')
+
+        if not sender or not new_name or not conversation_id:
+            return None, jsonify({'message': 'Información faltante'}), 400
+
+        if not InputValidators.is_valid_string(sender, 5, 100):
+            return None, jsonify({'message': 'Identificador inválido'}), 400
+
+        if not InputValidators.is_valid_string(new_name, 1, 25, cls.conversation_name_regex):
+            return None, jsonify({'message': 'Nombre de conversación inválido'}), 400
+
+        if not InputValidators.is_valid_string(conversation_id, 5, 24, cls.mongo_id_regex):
+            return None, jsonify({'message': 'Identificador de conversación inválido'}), 400
+
+        return UpdateConversationNameRequest(sender, new_name, conversation_id), None, None
