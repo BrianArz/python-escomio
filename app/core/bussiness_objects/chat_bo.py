@@ -1,8 +1,9 @@
 from flask import current_app, jsonify
 
-from app.core import ConversationBo
+from app.core import ConversationBo, MessageBo
 from app.schema import RasaAskRequest
-from app.model import AddQuestionRequest, UpdateConversationNameRequest, DeleteConversationRequest, GetConversationMessagesRequest
+from app.model import (AddQuestionRequest, UpdateConversationNameRequest, GetConversationMessagesRequest,
+                       ConversationIdRequest, UpdateMessageGradeRequest)
 
 from app.service.rasa_service import RasaService
 
@@ -52,7 +53,7 @@ class ChatBo:
             return jsonify({'message': str(e)}), 500
 
     @classmethod
-    def delete_conversation(cls, information: DeleteConversationRequest):
+    def delete_conversation(cls, information: ConversationIdRequest):
         try:
             response = ConversationBo.delete_conversation(information.conversation_id, information.sender)
 
@@ -79,4 +80,20 @@ class ChatBo:
 
         except Exception as e:
             current_app.logger.error(f"Rasa get conversation messages failed: {str(e)}")
+            return jsonify({'message': str(e)}), 500
+
+    @classmethod
+    def update_message_grade(cls, information: UpdateMessageGradeRequest):
+        try:
+            response = MessageBo.update_message_grade(information.conversation_id, information.sender,
+                                                      information.message_id, information.new_grade)
+
+            if response:
+                return jsonify({'message': 'Respuesta calificada exitosamente'}), 200
+
+            else:
+                return jsonify({'message': 'No se pudo calificar la respuesta'}), 400
+
+        except Exception as e:
+            current_app.logger.error(f"Rasa update message grade failed: {str(e)}")
             return jsonify({'message': str(e)}), 500
