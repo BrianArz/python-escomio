@@ -1,6 +1,6 @@
 from mongoengine import DoesNotExist
 
-from app.model import MongoConversation, MongoUser
+from app.model import MongoConversation, MongoUser, MongoMessage
 
 
 class MongoConversationRepository:
@@ -32,3 +32,18 @@ class MongoConversationRepository:
             return conversation
         except DoesNotExist:
             return None
+
+    @classmethod
+    def delete_conversation_by_user(cls, conversation_id: str, user: MongoUser):
+        try:
+            conversation = cls.get_conversation_by_id_and_user(conversation_id, user)
+
+            if conversation is None:
+                return False
+
+            MongoMessage.objects(conversation_id=conversation_id).delete()
+            conversation.delete()
+            return True
+
+        except DoesNotExist:
+            return False

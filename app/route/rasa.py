@@ -39,3 +39,15 @@ def update_conversation_name():
 
     response = ChatBo.update_conversation_name(information)
     return make_response(response)
+
+
+@rasa_bp.route('/delete-conversation', methods=['POST'])
+@authorize
+def delete_conversation():
+    information, error_response, status_code = EndpointValidators.validate_delete_conversation(request)
+
+    if error_response:
+        return error_response, status_code
+
+    response = ChatBo.delete_conversation(information)
+    return make_response(response)

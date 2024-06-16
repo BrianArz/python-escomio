@@ -50,7 +50,6 @@ class ConversationBo:
     def update_conversation_name(conversation_id: str, user_id: str, new_name: str):
 
         user = MongoUserRepository.get_user_by_uid(user_id)
-
         if not user:
             raise ValueError("Usuario no encontrado")
 
@@ -63,3 +62,15 @@ class ConversationBo:
 
         return True
 
+    @staticmethod
+    def delete_conversation(conversation_id: str, user_id: str):
+
+        user = MongoUserRepository.get_user_by_uid(user_id)
+        if not user:
+            raise ValueError("Usuario no encontrado")
+
+        response = MongoConversationRepository.delete_conversation_by_user(conversation_id, user)
+        if not response:
+            raise ValueError("No se pudo eliminar la conversación")
+
+        return response
