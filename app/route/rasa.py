@@ -54,6 +54,7 @@ def delete_conversation():
 
 
 @rasa_bp.route('/get-conversation_messages', methods=['GET'])
+@authorize
 def get_conversation_messages():
     information, error_response, status_code = EndpointValidators.validate_conversation_id_request(request)
 
@@ -65,6 +66,7 @@ def get_conversation_messages():
 
 
 @rasa_bp.route('/update-message-grade', methods=['PUT'])
+@authorize
 def update_message_grade():
     information, error_response, status_code = EndpointValidators.validate_update_message_grade(request)
 
@@ -72,4 +74,16 @@ def update_message_grade():
         return error_response, status_code
 
     response = ChatBo.update_message_grade(information)
+    return make_response(response)
+
+
+@rasa_bp.route('/suggest-by-chat', methods=['POST'])
+@authorize
+def suggest_by_chat():
+    information, error_response, status_code = EndpointValidators.validate_message_id_request(request)
+
+    if error_response:
+        return error_response, status_code
+
+    response = ChatBo.suggest_training_by_chat(information)
     return make_response(response)
