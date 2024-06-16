@@ -1,7 +1,7 @@
 from flask import jsonify
 
 from app.schema import RasaAskRequest, FirebaseCredentialsRequest
-from app.model import CreateAccountRequest, AddQuestionRequest, UpdateConversationNameRequest
+from app.model import CreateAccountRequest, AddQuestionRequest, UpdateConversationNameRequest, DeleteConversationRequest
 from .input_validators import InputValidators
 
 
@@ -107,3 +107,19 @@ class EndpointValidators:
             return None, jsonify({'message': 'Identificador de conversación inválido'}), 400
 
         return UpdateConversationNameRequest(sender, new_name, conversation_id), None, None
+
+    @classmethod
+    def validate_delete_conversation(cls, request):
+        sender = request.cookies.get('X-Uid', None)
+        conversation_id = request.json.get('conversation_id')
+
+        if not sender or not conversation_id:
+            return None, jsonify({'message': 'Información faltante'}), 400
+
+        if not InputValidators.is_valid_string(conversation_id, 5, 24, cls.mongo_id_regex):
+            return None, jsonify({'message:' 'Identificador de conversación inválido'}), 400
+
+        if not InputValidators.is_valid_string(sender, 5, 100):
+            return None, jsonify({'message:': 'Identificador inválido'})
+
+        return DeleteConversationRequest(conversation_id, sender), None, None
