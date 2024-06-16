@@ -1,7 +1,7 @@
-from .delete_conversation_request import DeleteConversationRequest
+from .conversation_id_request import ConversationIdRequest
 
 
-class GetConversationMessagesRequest(DeleteConversationRequest):
+class GetConversationMessagesRequest(ConversationIdRequest):
 
     def __init__(self, conversation_id: str, sender: str) -> None:
         super().__init__(conversation_id, sender)
