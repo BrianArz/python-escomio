@@ -12,6 +12,7 @@ class EndpointValidators:
     username_regex = r'^[a-zA-Z0-9_]+$'
     number_regex = r'^[0-9]*$'
     conversation_name_regex = r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]+$'
+    question_regex = r"^[\w\sáéíóúÁÉÍÓÚüÜñÑ.,;:!¿?¡()\"'«»\-—]*$"
 
     @classmethod
     def validate_user_credentials(cls, request):
@@ -64,8 +65,8 @@ class EndpointValidators:
         if not InputValidators.is_valid_string(sender, 5, 100):
             return None, jsonify({'message': 'Identificador inválido'}), 400
 
-        if not InputValidators.is_valid_string(message, None, 300):
-            return None, jsonify({'message': 'Pregunta inválida'}), 400
+        if not InputValidators.is_valid_string(message, None, 300, cls.question_regex):
+            return None, jsonify({'message': 'Pregunta inválida. No se permiten caracteres especiales'}), 400
 
         return RasaAskRequest(sender, message), None, None
 
@@ -81,8 +82,8 @@ class EndpointValidators:
         if not InputValidators.is_valid_string(sender, 5, 100):
             return None, jsonify({'message': 'Identificador inválido'}), 400
 
-        if not InputValidators.is_valid_string(message, None, 300):
-            return None, jsonify({'message': 'Pregunta inválida inválido'}), 400
+        if not InputValidators.is_valid_string(message, None, 300, cls.question_regex):
+            return None, jsonify({'message': 'Pregunta inválida. No se permiten caracteres especiales'}), 400
 
         if not InputValidators.is_valid_string(conversation_id, 5, 24, cls.mongo_id_regex):
             return None, jsonify({'message': 'Identificador de conversación inválido'}), 400
