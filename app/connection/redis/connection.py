@@ -10,9 +10,10 @@ class RedisConnection:
         current_app.logger.info("Initializing redis connection...")
 
         if cls._redis_connection is None:
-            redis_uri = current_app.config.get('REDIS_URI', 'localhost')
-            redis_port = current_app.config.get('REDIS_PORT', 6379)
-            redis_url = f'{redis_uri}:{redis_port}'
+            redis_uri = current_app.config.get('REDIS_URI')
+            redis_port = current_app.config.get('REDIS_PORT')
+            redis_password = current_app.config.get('REDIS_PASSWORD')
+            redis_url = f'redis://:{redis_password}@{redis_uri}:{redis_port}'
             cls._redis_connection = get_redis_connection(url=redis_url)
         return cls._redis_connection
 
