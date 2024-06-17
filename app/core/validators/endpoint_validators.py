@@ -110,6 +110,18 @@ class EndpointValidators:
         return UpdateConversationNameRequest(sender, new_name, conversation_id), None, None
 
     @classmethod
+    def validate_id_request(cls, request):
+        sender = request.cookies.get('X-Uid', None)
+
+        if not sender:
+            return None, jsonify({'message': 'Información faltante'}), 400
+
+        if not InputValidators.is_valid_string(sender, 5, 100):
+            return None, jsonify({'message:': 'Identificador inválido'})
+
+        return sender, None, None
+
+    @classmethod
     def validate_conversation_id_request(cls, request):
         sender = request.cookies.get('X-Uid', None)
         conversation_id = request.json.get('conversation_id')
