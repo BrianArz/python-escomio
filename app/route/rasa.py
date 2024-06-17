@@ -53,7 +53,7 @@ def delete_conversation():
     return make_response(response)
 
 
-@rasa_bp.route('/get-conversation_messages', methods=['GET'])
+@rasa_bp.route('/get-conversation_messages', methods=['POST'])
 @authorize
 def get_conversation_messages():
     information, error_response, status_code = EndpointValidators.validate_conversation_id_request(request)
