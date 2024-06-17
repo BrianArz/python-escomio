@@ -21,3 +21,4 @@ from .utils.user_view_info import UserViewInfo
 from .responses.create_conversation_response import CreateConversationResponse
 from .responses.add_message_response import AddMessageResponse
 from .responses.get_conversation_messages_response import GetConversationMessagesResponse
+from .responses.get_conversations_response import GetConversationsResponse
