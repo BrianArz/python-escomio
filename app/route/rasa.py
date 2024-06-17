@@ -87,3 +87,16 @@ def suggest_by_chat():
 
     response = ChatBo.suggest_training_by_chat(information)
     return make_response(response)
+
+
+@rasa_bp.route('/get-conversations', methods=['GET'])
+@authorize
+def get_conversations():
+
+    information, error_response, status_code = EndpointValidators.validate_id_request(request)
+
+    if error_response:
+        return error_response, status_code
+
+    response = ChatBo.get_user_conversations(information)
+    return make_response(response)

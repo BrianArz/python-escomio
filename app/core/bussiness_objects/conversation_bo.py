@@ -1,4 +1,4 @@
-from app.model import MongoConversation, CreateConversationResponse, GetConversationMessagesResponse
+from app.model import MongoConversation, CreateConversationResponse, GetConversationMessagesResponse, GetConversationsResponse
 from app.respository import MongoUserRepository, MongoConversationRepository
 from app.core import MessageBo
 
@@ -89,3 +89,25 @@ class ConversationBo:
         serialized_messages = [MessageBo.serialize_message(message) for message in response]
 
         return GetConversationMessagesResponse(conversation_id, serialized_messages)
+
+    @staticmethod
+    def serialize_conversation(conversation: MongoConversation):
+        return {
+            "name": conversation.name,
+            "id": str(conversation.id)
+        }
+
+    @staticmethod
+    def get_user_conversations(user_id: str):
+
+        user = MongoUserRepository.get_user_by_uid(user_id)
+        if not user:
+            raise ValueError("Usuario no encontrado")
+
+        response = MongoConversationRepository.get_conversations_by_user(user)
+        if not response:
+            return []
+
+        serialized_conversations = [ConversationBo.serialize_conversation(conversation) for conversation in response]
+
+        return GetConversationsResponse(serialized_conversations)
