@@ -80,7 +80,7 @@ class ChatBo:
                 return jsonify(response.__dict__), 200
 
             else:
-                return jsonify({'message': 'No se pudieron obtener los mensaje de la conversación'}), 400
+                return jsonify({'message': 'No se pudieron obtener los mensajes de la conversación'}), 400
 
         except Exception as e:
             current_app.logger.error(f"Rasa get conversation messages failed: {str(e)}")
@@ -118,3 +118,21 @@ class ChatBo:
         except Exception as e:
             current_app.logger.error(f"Rasa training suggestion failed: {str(e)}")
             return jsonify({'message': str(e)}), 500
+
+    @classmethod
+    def get_user_conversations(cls, user_id: str):
+        from app.core import ConversationBo
+        try:
+            response = ConversationBo.get_user_conversations(user_id)
+
+            if response:
+                return jsonify(response.__dict__), 200
+
+            else:
+                return jsonify({'message': 'No se pudieron obtener las conversaciones del usuario'}), 400
+
+        except Exception as e:
+            current_app.logger.error(f"Rasa get conversations failed: {str(e)}")
+            return jsonify({'message': str(e)}), 500
+
+
