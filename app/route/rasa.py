@@ -41,7 +41,7 @@ def update_conversation_name():
     return make_response(response)
 
 
-@rasa_bp.route('/delete-conversation', methods=['DELETE'])
+@rasa_bp.route('/delete-conversation', methods=['PUT'])
 @authorize
 def delete_conversation():
     information, error_response, status_code = EndpointValidators.validate_conversation_id_request(request)
