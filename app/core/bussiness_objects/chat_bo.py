@@ -129,7 +129,7 @@ class ChatBo:
                 return jsonify(response.__dict__), 200
 
             else:
-                return jsonify({'message': 'No se pudieron obtener las conversaciones del usuario'}), 400
+                return jsonify({'message': '[]'}), 200
 
         except Exception as e:
             current_app.logger.error(f"Rasa get conversations failed: {str(e)}")
