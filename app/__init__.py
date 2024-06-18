@@ -23,7 +23,8 @@ def create_app():
 
     try:
         # This allows access from any localhost domain and subdomain.
-        CORS(app, supports_credentials=True, origins=["http://localhost:*"], methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
+        CORS(app, supports_credentials=True, origins=["http://localhost:4200"], methods=["GET", "POST", "PUT", "DELETE",
+                                                                                 "PATCH"])
 
         @app.after_request
         def after_request(response):

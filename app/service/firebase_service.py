@@ -49,6 +49,10 @@ class FirebaseService:
             fb_response = FirebaseParser.parse_sign_in(response)
 
             user = MongoUserRepository.get_user_by_uid(fb_response.uid)
+
+            if user is None:
+                return jsonify({"message": "Credenciales inválidas"}), 500
+
             user_view_info = UserViewInfo(username=user.username, role=user.role)
 
             service_response = cls._make_service_response(fb_response, user_view_info)
