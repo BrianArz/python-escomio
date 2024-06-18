@@ -164,3 +164,19 @@ class EndpointValidators:
             return None, jsonify({'message': 'Nueva calificación inválida'}), 400
 
         return UpdateMessageGradeRequest(message_id_request.conversation_id, message_id_request.sender, message_id_request.message_id, new_grade), None, None
+
+    @classmethod
+    def validata_role_request(cls, request):
+        sender, error_response, status_code = cls.validate_id_request(request)
+        if error_response:
+            return error_response, status_code
+
+        role_id = request.json.get('role')
+
+        if sender is None or role_id is None:
+            return None, jsonify({'message': 'Información faltante'}), 400
+
+        if role_id is not 0:
+            return None, jsonify({'message': 'Usuario no tiene los permisos necesarios'}), 400
+
+        return sender, None, None
