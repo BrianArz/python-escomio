@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from flask import jsonify
 
 from app.respository import MongoUserRepository, MongoConversationRepository, MongoMessageRepository, MongoSuggestionRepository
 from app.model import MongoUser, MongoSuggestion
@@ -39,3 +40,15 @@ class SuggestionBo:
         MongoMessageRepository.save_message(message)
 
         return True
+
+    @staticmethod
+    def get_suggestions(user_id: str):
+        user = MongoUserRepository.get_user_by_uid(user_id)
+        if user is None:
+            return jsonify({'message': 'Usuario no identificado'}), 400
+
+        if user.role != 0:
+            return jsonify({'message': 'Usuario no tiene los permisos necesarios'}), 400
+
+        response = MongoSuggestionRepository.all_suggestions_to_json()
+        return jsonify(response), 200
