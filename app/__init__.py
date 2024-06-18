@@ -4,7 +4,7 @@ from flask import Flask
 from flask_cors import CORS
 
 # Local files
-from app.route import health_bp, auth_bp, rasa_bp
+from app.route import health_bp, auth_bp, rasa_bp, admin_bp
 from app.service import FirebaseService
 from app.connection import RedisConnection, MongoDbConnection
 from app.respository import initialize_database
@@ -23,8 +23,7 @@ def create_app():
 
     try:
         # This allows access from any localhost domain and subdomain.
-        CORS(app, supports_credentials=True, origins=["http://localhost:4200"], methods=["GET", "POST", "PUT", "DELETE",
-                                                                                 "PATCH"])
+        CORS(app, supports_credentials=True, origins=["http://localhost:4200"], methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
 
         @app.after_request
         def after_request(response):
@@ -42,6 +41,7 @@ def create_app():
         app.register_blueprint(auth_bp, url_prefix='/auth')
         app.register_blueprint(health_bp, url_prefix='/health')
         app.register_blueprint(rasa_bp, url_prefix='/rasa')
+        app.register_blueprint(admin_bp, url_prefix='/admin')
 
         # Activates all level logging
         configure_logging(app)
