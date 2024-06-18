@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from flask import jsonify
 
 from app.model import MongoMessage
 from app.respository import MongoMessageRepository, MongoUserRepository, MongoConversationRepository
@@ -50,3 +51,15 @@ class MessageBo:
             "conversation_id": str(message.conversation_id.id),
             "message_id": str(message.id),
         }
+
+    @staticmethod
+    def get_messages(user_id: str):
+        user = MongoUserRepository.get_user_by_uid(user_id)
+        if user is None:
+            return jsonify({'message': 'Usuario no identificado'}), 400
+
+        if user.role != 0:
+            return jsonify({'message': 'Usuario no tiene los permisos necesarios'}), 400
+
+        response = MongoMessageRepository.all_messages_to_json()
+        return jsonify(response), 200
